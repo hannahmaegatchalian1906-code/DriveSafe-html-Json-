@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveSafe - Rent, Drive, Explore</title>
+    <!-- Tailwind CSS for rapid modern styling matching the clean design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBlue: '#1e40af',
+                        brandDark: '#0f172a',
+                        brandLight: '#f8fafc',
+                        creamBg: '#fbf9f4',
+                        cardCream: '#f3eee3',
+                        deepNavy: '#172554'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for UI icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-[#fbf9f4] text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="bg-[#fbf9f4]/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200/60 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-2 cursor-pointer" onclick="switchTab('home')">
+                <i class="fa-solid fa-car-side text-3xl text-deepNavy"></i>
+                <div>
+                    <span class="text-2xl font-extrabold tracking-tight text-deepNavy">DriveSafe</span>
+                    <p class="text-[9px] tracking-widest text-slate-500 uppercase font-semibold">Rent · Drive · Explore</p>
+                </div>
+            </div>
+
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8 font-medium text-sm text-slate-600">
+                <button onclick="switchTab('home')" id="nav-home" class="text-deepNavy font-semibold border-b-2 border-deepNavy pb-1">Home</button>
+                <button onclick="switchTab('vehicles')" id="nav-vehicles" class="hover:text-deepNavy transition">Vehicles</button>
+                <button onclick="switchTab('about')" id="nav-about" class="hover:text-deepNavy transition">About Us</button>
+                <button onclick="switchTab('faqs')" id="nav-faqs" class="hover:text-deepNavy transition">FAQs</button>
+                <button onclick="switchTab('contact')" id="nav-contact" class="hover:text-deepNavy transition">Contact</button>
+            </nav>
+
+            <!-- Auth Buttons -->
+            <div class="flex items-center space-x-4">
+                <button onclick="openModal('signin')" class="text-sm font-semibold text-slate-700 hover:text-deepNavy px-4 py-2 rounded-lg border border-slate-300">Log In</button>
+                <button onclick="openModal('signup')" class="text-sm font-semibold text-white bg-deepNavy hover:bg-blue-900 px-4 py-2 rounded-lg shadow">Sign Up</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+    <main class="flex-grow">
+
+        <!-- 1. HOME TAB -->
+        <section id="tab-home" class="tab-content">
+            <!-- Hero Banner -->
+            <div class="relative max-w-7xl mx-auto px-6 pt-8 pb-16">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-6 space-y-6">
+                        <span class="text-xs uppercase tracking-widest text-slate-500 font-bold border-b border-slate-400 pb-1">Your Journey, Our Priority</span>
+                        <h1 class="text-5xl font-extrabold text-deepNavy tracking-tight leading-tight">
+                            Reliable Vehicle Rentals for Every Journey
+                        </h1>
+                        <p class="text-slate-600 text-base">
+                            Explore the city, discover new destinations, and make every trip safer and easier with DriveSafe.
+                        </p>
+                    </div>
+                    <div class="lg:col-span-6 relative">
+                        <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1000&q=80" alt="Car on road" class="rounded-2xl shadow-xl w-full object-cover h-[340px]">
+                    </div>
+                </div>
+
+                <!-- Search/Booking Widget Bar -->
+                <div class="bg-white rounded-2xl shadow-xl p-4 mt-8 grid grid-cols-1 md:grid-cols-5 gap-4 items-center border border-slate-100">
+                    <div class="p-3 border rounded-xl hover:border-deepNavy cursor-pointer" onclick="startBooking('location')">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase">Pick-up Location</label>
+                        <div class="text-sm font-semibold text-slate-700 flex items-center justify-between mt-1">
+                            <span id="selected-loc-label">Enter location</span> <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded-xl hover:border-deepNavy cursor-pointer" onclick="startBooking('dates')">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase">Pick-up Date</label>
+                        <div class="text-sm font-semibold text-slate-700 flex items-center justify-between mt-1">
+                            <span id="selected-date-label">Select date</span> <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded-xl hover:border-deepNavy cursor-pointer" onclick="startBooking('dates')">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase">Drop-off Date</label>
+                        <div class="text-sm font-semibold text-slate-700 flex items-center justify-between mt-1">
+                            <span>Select date</span> <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded-xl hover:border-deepNavy cursor-pointer" onclick="switchTab('vehicles')">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase">Vehicle Type</label>
+                        <div class="text-sm font-semibold text-slate-700 flex items-center justify-between mt-1">
+                            <span>Any type</span> <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <button onclick="switchTab('vehicles')" class="w-full bg-deepNavy hover:bg-blue-900 text-white font-semibold py-4 rounded-xl shadow transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-magnifyingGlass"></i>
+                            <span>Search Vehicles</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Feature Highlights -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-16 pt-8 border-t border-slate-200/60">
+                    <div class="flex items-start space-x-4">
+                        <div class="text-deepNavy text-2xl bg-white p-3 rounded-full shadow-sm"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Safe & Well-Maintained</h4>
+                            <p class="text-xs text-slate-500 mt-1">All vehicles are regularly inspected and serviced.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="text-deepNavy text-2xl bg-white p-3 rounded-full shadow-sm"><i class="fa-solid fa-tag"></i></div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Affordable Rates</h4>
+                            <p class="text-xs text-slate-500 mt-1">Get the best value for your money.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="text-deepNavy text-2xl bg-white p-3 rounded-full shadow-sm"><i class="fa-solid fa-headset"></i></div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">24/7 Support</h4>
+                            <p class="text-xs text-slate-500 mt-1">We're always here to help you.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="text-deepNavy text-2xl bg-white p-3 rounded-full shadow-sm"><i class="fa-solid fa-car"></i></div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Wide Selection</h4>
+                            <p class="text-xs text-slate-500 mt-1">From compact cars to SUVs, we have the perfect ride.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. VEHICLES TAB (Fleet & Catalog) -->
+        <section id="tab-vehicles" class="tab-content hidden max-w-7xl mx-auto px-6 py-8">
+            <div class="bg-gradient-to-r from-deepNavy to-blue-800 rounded-2xl text-white p-8 mb-8 relative overflow-hidden">
+                <div class="max-w-xl">
+                    <span class="text-xs uppercase tracking-widest text-blue-200 font-semibold">Our Fleet</span>
+                    <h2 class="text-3xl font-extrabold mt-1">Explore Our Vehicles</h2>
+                    <p class="text-slate-200 text-sm mt-2">Quality vehicles for every journey. Choose from our wide selection of cars, SUVs, vans, and more.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Filters Sidebar -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6 h-fit">
+                    <h3 class="font-bold text-slate-800 flex items-center justify-between">
+                        <span><i class="fa-solid fa-filter mr-2"></i> Filter Vehicles</span>
+                        <button onclick="resetFilters()" class="text-xs text-blue-600 font-medium hover:underline">Clear All</button>
+                    </h3>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Vehicle Type</label>
+                        <div class="space-y-2 text-sm">
+                            <label class="flex items-center space-x-2"><input type="checkbox" class="filter-checkbox" value="Sedan" onchange="filterVehicles()"> <span>Sedan</span></label>
+                            <label class="flex items-center space-x-2"><input type="checkbox" class="filter-checkbox" value="SUV" onchange="filterVehicles()"> <span>SUV</span></label>
+                            <label class="flex items-center space-x-2"><input type="checkbox" class="filter-checkbox" value="Van" onchange="filterVehicles()"> <span>Van</span></label>
+                            <label class="flex items-center space-x-2"><input type="checkbox" class="filter-checkbox" value="MPV" onchange="filterVehicles()"> <span>MPV</span></label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Transmission</label>
+                        <div class="space-y-2 text-sm">
+                            <label class="flex items-center space-x-2"><input type="checkbox" class="filter-checkbox" value="Automatic" onchange="filterVehicles()"> <span>Automatic</span></label>
+                            <label class="flex items-center space-x-2"><input type="checkbox" class="filter-checkbox" value="Manual" onchange="filterVehicles()"> <span>Manual</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicles Grid -->
+                <div class="lg:col-span-3">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate-700 text-lg">Available Vehicles <span id="vehicle-count" class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full"></span></h3>
+                    </div>
+                    <div id="vehicle-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Dynamically populated from JSON fleet data -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. BOOKING WIZARD TAB (Location & Date selection steps) -->
+        <section id="tab-booking" class="tab-content hidden max-w-7xl mx-auto px-6 py-8">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                <!-- Progress bar -->
+                <div class="flex items-center justify-between mb-8 pb-6 border-b border-slate-100 text-sm font-semibold">
+                    <div id="step-ind-1" class="flex items-center text-deepNavy"><span class="w-7 h-7 rounded-full bg-deepNavy text-white flex items-center justify-center mr-2 text-xs">1</span> Location</div>
+                    <div class="flex-grow h-0.5 bg-slate-200 mx-4"></div>
+                    <div id="step-ind-2" class="flex items-center text-slate-400"><span class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center mr-2 text-xs">2</span> Dates</div>
+                    <div class="flex-grow h-0.5 bg-slate-200 mx-4"></div>
+                    <div id="step-ind-3" class="flex items-center text-slate-400"><span class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center mr-2 text-xs">3</span> Vehicle</div>
+                    <div class="flex-grow h-0.5 bg-slate-200 mx-4"></div>
+                    <div id="step-ind-4" class="flex items-center text-slate-400"><span class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center mr-2 text-xs">4</span> Confirm</div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left Column: Interactive Selector -->
+                    <div class="space-y-6">
+                        <div>
+                            <span class="text-xs uppercase text-slate-400 font-bold">Book a Vehicle</span>
+                            <h2 id="booking-step-title" class="text-2xl font-extrabold text-deepNavy mt-1">Pick-up Location</h2>
+                            <p id="booking-step-subtitle" class="text-xs text-slate-500 mt-1">Where would you like to pick up your vehicle?</p>
+                        </div>
+
+                        <div id="booking-step-content" class="space-y-4">
+                            <!-- Populated dynamically based on booking step -->
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Map Preview Simulation -->
+                    <div class="bg-slate-100 rounded-xl p-4 flex flex-col justify-between border border-slate-200 relative overflow-hidden h-[450px]">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-70" style="background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80')"></div>
+                        <div class="relative z-10 bg-white/90 backdrop-blur px-3 py-1.5 rounded-lg w-fit text-xs font-bold text-deepNavy shadow">
+                            <i class="fa-solid fa-location-dot text-red-500 mr-1"></i> Selected Location Map View
+                        </div>
+                        <div class="relative z-10 bg-white rounded-xl p-4 shadow flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fa-solid fa-shield-heart text-deepNavy text-xl"></i>
+                                <div>
+                                    <h4 class="font-bold text-xs text-slate-800">Safe, convenient pick-up points</h4>
+                                    <p class="text-[11px] text-slate-500">Well-maintained locations, easy to find.</p>
+                                </div>
+                            </div>
+                            <button id="booking-next-btn" onclick="advanceBookingStep()" class="bg-deepNavy hover:bg-blue-900 text-white text-xs font-semibold px-4 py-2.5 rounded-lg shadow">
+                                Continue to Dates <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ABOUT US TAB -->
+        <section id="tab-about" class="tab-content hidden max-w-7xl mx-auto px-6 py-8 space-y-12">
+            <div class="bg-white rounded-2xl p-8 border border-slate-200 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div>
+                    <span class="text-xs uppercase text-slate-400 font-bold">About Us</span>
+                    <h2 class="text-3xl font-extrabold text-deepNavy mt-1">DriveSafe: Your Trusted Car Rental Partner</h2>
+                    <p class="text-slate-600 text-sm mt-4 leading-relaxed">
+                        At DriveSafe, we believe that every journey matters. We provide safe, reliable, and affordable car rental services to help you travel with confidence — whether for business, leisure, or life's special moments.
+                    </p>
+                </div>
+                <div>
+                    <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80" alt="Travel" class="rounded-xl shadow-md w-full h-[260px] object-cover">
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. FAQS TAB -->
+        <section id="tab-faqs" class="tab-content hidden max-w-7xl mx-auto px-6 py-8">
+            <div class="bg-white rounded-2xl p-8 border border-slate-200">
+                <span class="text-xs uppercase text-slate-400 font-bold">Help Center / FAQs</span>
+                <h2 class="text-3xl font-extrabold text-deepNavy mt-1 mb-6">Frequently Asked Questions</h2>
+                <div class="space-y-4">
+                    <div class="border rounded-xl p-4 cursor-pointer hover:bg-slate-50" onclick="toggleFAQ(this)">
+                        <div class="flex justify-between items-center font-bold text-slate-800 text-sm">
+                            <span>How do I book a vehicle with DriveSafe?</span> <i class="fa-solid fa-plus text-xs"></i>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-2 hidden">You can book a vehicle by selecting your preferred car, choosing your pickup and return dates and locations, providing your details, and confirming your booking.</p>
+                    </div>
+                    <div class="border rounded-xl p-4 cursor-pointer hover:bg-slate-50" onclick="toggleFAQ(this)">
+                        <div class="flex justify-between items-center font-bold text-slate-800 text-sm">
+                            <span>What documents do I need to rent a car?</span> <i class="fa-solid fa-plus text-xs"></i>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-2 hidden">You need a valid driver's license, a secondary government-issued ID, and a credit or debit card for the security deposit.</p>
+                    </div>
+                    <div class="border rounded-xl p-4 cursor-pointer hover:bg-slate-50" onclick="toggleFAQ(this)">
+                        <div class="flex justify-between items-center font-bold text-slate-800 text-sm">
+                            <span>Are your vehicles insured and well-maintained?</span> <i class="fa-solid fa-plus text-xs"></i>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-2 hidden">Yes! All our vehicles undergo rigorous multi-point safety inspections before every rental and come with comprehensive basic insurance.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- AUTHENTICATION / SIGN IN & SIGN UP MODALS -->
+    <div id="auth-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <div id="modal-content">
+                <!-- Dynamically swapped login or signup form content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-deepNavy text-white py-8 mt-16 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-slate-300">
+            <p>&copy; 2026 DriveSafe Rent, Drive, Explore. All rights reserved.</p>
+            <div class="flex space-x-6 mt-4 md:mt-0">
+                <a href="#" class="hover:underline">Privacy Policy</a>
+                <a href="#" class="hover:underline">Terms of Service</a>
+                <a href="#" class="hover:underline">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JSON DATA & APPLICATION LOGIC -->
+    <script>
+        // EMBEDDED JSON DATASET (Fleet & Locations)
+        const appData = {
+            "locations": [
+                { "name": "Manila", "type": "Popular", "details": "Metro Manila" },
+                { "name": "Makati City", "type": "Popular", "details": "Metro Manila" },
+                { "name": "Pasig City", "type": "Popular", "details": "Metro Manila" },
+                { "name": "Ninoy Aquino International Airport (MNL)", "type": "Popular", "details": "Pasay City, Metro Manila" },
+                { "name": "Quezon City", "type": "All", "details": "Metro Manila" },
+                { "name": "Taguig City", "type": "All", "details": "Metro Manila" }
+            ],
+            "dates": [
+                { "label": "Today", "date": "Oct 6, 2026", "tag": "Quick Select" },
+                { "label": "Tomorrow", "date": "Oct 7, 2026", "tag": "Quick Select" },
+                { "label": "This Weekend", "date": "Oct 10, 2026", "tag": "Quick Select" },
+                { "label": "Next Week", "date": "Oct 13, 2026", "tag": "Quick Select" }
+            ],
+            "vehicles": [
+                { "id": 1, "name": "Toyota Veloz 2024", "type": "MPV", "transmission": "Automatic", "fuel": "Gasoline", "seats": 7, "price": 2800, "image": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80" },
+                { "id": 2, "name": "Toyota Fortuner 2023", "type": "SUV", "transmission": "Automatic", "fuel": "Diesel", "seats": 7, "price": 4500, "image": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=600&q=80" },
+                { "id": 3, "name": "Toyota Altis 2022", "type": "Sedan", "transmission": "Automatic", "fuel": "Gasoline", "seats": 5, "price": 2000, "image": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" },
+                { "id": 4, "name": "Toyota Hiace 2020", "type": "Van", "transmission": "Manual", "fuel": "Diesel", "seats": 12, "price": 3500, "image": "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=600&q=80" },
+                { "id": 5, "name": "Honda City 2021", "type": "Sedan", "transmission": "Automatic", "fuel": "Gasoline", "seats": 5, "price": 1800, "image": "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80" },
+                { "id": 6, "name": "Mitsubishi Xpander 2021", "type": "MPV", "transmission": "Automatic", "fuel": "Gasoline", "seats": 7, "price": 2300, "image": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" }
+            ]
+        };
+
+        let currentBookingStep = 1;
+
+        // Navigation Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            // Update nav active underlines
+            ['home', 'vehicles', 'about', 'faqs'].forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                if(btn) {
+                    if(t === tabId) {
+                        btn.className = "text-deepNavy font-semibold border-b-2 border-deepNavy pb-1";
+                    } else {
+                        btn.className = "hover:text-deepNavy transition text-slate-600";
+                    }
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render Vehicles Fleet from JSON
+        function renderVehicles(list) {
+            const grid = document.getElementById('vehicle-grid');
+            document.getElementById('vehicle-count').innerText = list.length;
+            grid.innerHTML = list.map(v => `
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between">
+                    <img src="${v.image}" alt="${v.name}" class="h-40 w-full object-cover">
+                    <div class="p-4 space-y-2">
+                        <span class="text-[10px] font-bold bg-blue-50 text-deepNavy px-2 py-0.5 rounded uppercase">${v.type}</span>
+                        <h4 class="font-bold text-slate-800 text-sm">${v.name}</h4>
+                        <div class="text-[11px] text-slate-500 flex space-x-3">
+                            <span><i class="fa-solid fa-user-group mr-1"></i>${v.seats} Seats</span>
+                            <span><i class="fa-solid fa-gear mr-1"></i>${v.transmission}</span>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 mt-2">
+                            <span class="font-extrabold text-deepNavy">₱ ${v.price.toLocaleString()} <span class="text-xs font-normal text-slate-500">/ day</span></span>
+                            <button onclick="alert('Booking confirmed for ${v.name}!')" class="bg-deepNavy text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-900">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter Functionality
+        function filterVehicles() {
+            const checkedTypes = Array.from(document.querySelectorAll('.filter-checkbox:checked')).map(cb => cb.value);
+            if(checkedTypes.length === 0) {
+                renderVehicles(appData.vehicles);
+            } else {
+                const filtered = appData.vehicles.filter(v => checkedTypes.includes(v.type) || checkedTypes.includes(v.transmission));
+                renderVehicles(filtered);
+            }
+        }
+        function resetFilters() {
+            document.querySelectorAll('.filter-checkbox').forEach(cb => cb.checked = false);
+            renderVehicles(appData.vehicles);
+        }
+
+        // Booking Wizard Step Manager
+        function startBooking(step) {
+            switchTab('booking');
+            if(step === 'location') setBookingStep(1);
+            if(step === 'dates') setBookingStep(2);
+        }
+
+        function setBookingStep(step) {
+            currentBookingStep = step;
+            const title = document.getElementById('booking-step-title');
+            const subtitle = document.getElementById('booking-step-subtitle');
+            const content = document.getElementById('booking-step-content');
+            const nextBtn = document.getElementById('booking-next-btn');
+
+            // Update step indicators
+            for(let i=1; i<=4; i++) {
+                const ind = document.getElementById(`step-ind-${i}`);
+                if(i <= step) {
+                    ind.className = "flex items-center text-deepNavy font-semibold";
+                    ind.children[0].className = "w-7 h-7 rounded-full bg-deepNavy text-white flex items-center justify-center mr-2 text-xs";
+                } else {
+                    ind.className = "flex items-center text-slate-400";
+                    ind.children[0].className = "w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center mr-2 text-xs";
+                }
+            }
+
+            if(step === 1) {
+                title.innerText = "Pick-up Location";
+                subtitle.innerText = "Where would you like to pick up your vehicle?";
+                nextBtn.innerHTML = `Continue to Dates <i class="fa-solid fa-arrow-right ml-1"></i>`;
+                content.innerHTML = `
+                    <div class="relative">
+                        <input type="text" placeholder="Search location..." class="w-full border rounded-xl p-3 pl-10 text-sm focus:outline-none focus:border-deepNavy">
+                        <i class="fa-solid fa-magnifyingGlass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                    </div>
+                    <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                        ${appData.locations.map(l => `
+                            <div onclick="document.getElementById('selected-loc-label').innerText = '${l.name}'; alert('Selected location: ${l.name}');" class="p-3 border rounded-xl hover:border-deepNavy cursor-pointer bg-white">
+                                <div class="font-bold text-sm text-slate-800 flex items-center"><i class="fa-solid fa-location-dot text-deepNavy mr-2"></i> ${l.name}</div>
+                                <div class="text-xs text-slate-500 ml-5">${l.details}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if(step === 2) {
+                title.innerText = "Pick-up Date";
+                subtitle.innerText = "Choose the date when you want to pick up your vehicle.";
+                nextBtn.innerHTML = `Continue to Vehicle <i class="fa-solid fa-arrow-right ml-1"></i>`;
+                content.innerHTML = `
+                    <div class="space-y-2">
+                        ${appData.dates.map(d => `
+                            <div onclick="alert('Selected date: ${d.date}');" class="p-3 border rounded-xl hover:border-deepNavy cursor-pointer bg-white flex items-center justify-between">
+                                <div class="font-bold text-sm text-slate-800 flex items-center"><i class="fa-regular fa-calendar text-deepNavy mr-2"></i> ${d.label}</div>
+                                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">${d.date}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if(step === 3) {
+                title.innerText = "Select Vehicle";
+                subtitle.innerText = "Choose from our available fleet.";
+                nextBtn.innerHTML = `Confirm Booking <i class="fa-solid fa-check ml-1"></i>`;
+                content.innerHTML = `
+                    <div class="space-y-2 max-h-60 overflow-y-auto">
+                        ${appData.vehicles.map(v => `
+                            <div class="p-3 border rounded-xl hover:border-deepNavy cursor-pointer bg-white flex items-center justify-between">
+                                <span class="font-bold text-sm text-slate-800">${v.name}</span>
+                                <span class="text-xs font-semibold text-deepNavy">₱ ${v.price}/day</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                title.innerText = "Booking Confirmed!";
+                subtitle.innerText = "Thank you for choosing DriveSafe.";
+                nextBtn.innerHTML = `Back to Home`;
+                content.innerHTML = `<div class="p-6 bg-blue-50 text-deepNavy rounded-xl font-bold text-center">Your reservation has been successfully registered!</div>`;
+            }
+        }
+
+        function advanceBookingStep() {
+            if(currentBookingStep < 4) setBookingStep(currentBookingStep + 1);
+            else switchTab('home');
+        }
+
+        // Modals (Sign In / Sign Up)
+        function openModal(type) {
+            const modal = document.getElementById('auth-modal');
+            const container = document.getElementById('modal-content');
+            modal.classList.remove('hidden');
+
+            if(type === 'signin') {
+                container.innerHTML = `
+                    <h3 class="text-xl font-extrabold text-deepNavy">Sign In to DriveSafe</h3>
+                    <p class="text-xs text-slate-500 mt-1 mb-4">Manage your reservations and profile.</p>
+                    <div class="space-y-3">
+                        <div><label class="text-xs font-bold text-slate-500">Email Address</label><input type="email" placeholder="name@example.com" class="w-full border rounded-lg p-2.5 text-sm mt-1"></div>
+                        <div><label class="text-xs font-bold text-slate-500">Password</label><input type="password" placeholder="********" class="w-full border rounded-lg p-2.5 text-sm mt-1"></div>
+                        <button onclick="closeModal(); alert('Signed in successfully!');" class="w-full bg-deepNavy text-white py-3 rounded-lg font-semibold text-sm mt-2">Sign In</button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <h3 class="text-xl font-extrabold text-deepNavy">Create an Account</h3>
+                    <p class="text-xs text-slate-500 mt-1 mb-4">Join DriveSafe to unlock exclusive rates.</p>
+                    <div class="space-y-3">
+                        <div><label class="text-xs font-bold text-slate-500">Email Address</label><input type="email" placeholder="name@example.com" class="w-full border rounded-lg p-2.5 text-sm mt-1"></div>
+                        <div><label class="text-xs font-bold text-slate-500">Password</label><input type="password" placeholder="********" class="w-full border rounded-lg p-2.5 text-sm mt-1"></div>
+                        <button onclick="closeModal(); alert('Account created successfully!');" class="w-full bg-deepNavy text-white py-3 rounded-lg font-semibold text-sm mt-2">Register Now</button>
+                    </div>
+                `;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+
+        function toggleFAQ(element) {
+            const p = element.querySelector('p');
+            p.classList.toggle('hidden');
+        }
+
+        // Initialize fleet view on load
+        window.onload = () => {
+            renderVehicles(appData.vehicles);
+            setBookingStep(1);
+        };
+    </script>
+</body>
+</html>
